@@ -1,6 +1,5 @@
 package com.ldq.fonfig.controller;
 
-import com.ldq.fonfig.entity.ConfigFileScan;
 import com.ldq.fonfig.entity.PersonConfigFile;
 import com.ldq.fonfig.entity.PersonPrefix;
 import com.ldq.fonfig.entity.PersonValue;
@@ -20,9 +19,6 @@ public class ConfigCtl {
     @Autowired
     private PersonConfigFile personConfigFile;
 
-    @Autowired
-    private ConfigFileScan configFileScan;
-
     @RequestMapping("/value")
     public String valuePrint (){
 
@@ -37,10 +33,5 @@ public class ConfigCtl {
     @RequestMapping("/file")
     public String configFile (){
         return personConfigFile.toString();
-    }
-
-    @RequestMapping("/fileScan")
-    public String configFileProperties (){
-        return configFileScan.toString();
     }
 }
