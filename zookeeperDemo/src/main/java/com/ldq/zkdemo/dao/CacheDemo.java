@@ -19,16 +19,7 @@ public class CacheDemo {
             .retryPolicy(new RetryUntilElapsed(5000, 1000))
             .build();
 
-    public static void main(String[] args) throws InterruptedException {
 
-        init();
-        treeCache();
-        pathChildrenCache();
-        nodeCache();
-        testData();
-        Thread.sleep(5 * 1000);
-
-    }
 
     /**
      * 初始化操作，创建父节点
@@ -134,6 +125,41 @@ public class CacheDemo {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+
+    /**
+     *   1、2 ：代表是TreeCache监听到了父节点和c1节点的创建缓存事件。
+     *
+     * 3、4 ：同时会发现并没有3这条语句，而是直接跳到了4，这是因为接收到的事件为：INITIALIZED，所以使用getData会得到null，而我们试图在null上调用getPath，所以才会触发异常。
+     *
+     * 5：NodeCache缓存进行start的时候传入true参数，所以能够直接得到当前节点的内容。
+     *
+     * 6： PathChildrenCache缓存成功c1的时候接收到的事件。
+     *
+     * 7：会发现没有7，因为PathChildrenCache的启动模式是：INITIALIZED，此时也是试图在null上调用GetPath，但是PathChildrenCache没有提供异常监听器，所以没办法获取。
+     *
+     * 8：第八点最让人疑惑了，因为上面的代码中并没有对父节点的数据进行改变，但是却监听到了这个事件，做了很多的测试发现，触发这个事件的原因为后面的testData方法中调用create导致的，并且只会监听到一次，这一点的具体原因还不太清楚。
+     *
+     * 9、10、11、12：创建c2、c3节点是TreeCache和PathChildrenCache监听到的事件。
+     *
+     * 13、14：修改c2节点数据，TreeCache和PathChildrenCache监听到的事件。
+     *
+     * 15、16、17、18、19、20：删除c2、c1、c3节点时，TreeCache和PathChildrenCache监听到的事件。
+     *
+     * 21：删除根节点时接收到的监听事件，此时只有TreeCache能够监听到。
+     * @param args
+     * @throws InterruptedException
+     */
+    public static void main(String[] args) throws InterruptedException {
+
+        init();
+        treeCache();
+        pathChildrenCache();
+        nodeCache();
+        testData();
+        Thread.sleep(5 * 1000);
+
     }
 
 
